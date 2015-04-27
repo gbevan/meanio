@@ -21,13 +21,13 @@ RUN \
     mkdir /var/run/sshd && \
     sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config && \
     sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config && \
-    useradd --create-home -s /bin/bash triage && \
-    mkdir -p /home/triage/.ssh && \
-    echo -n 'triage:triage' | chpasswd && \
-    touch /home/triage/.hushlogin && \
+    useradd --create-home -s /bin/bash mean && \
+    mkdir -p /home/mean/.ssh && \
+    echo -n 'mean:mean' | chpasswd && \
+    touch /home/mean/.hushlogin && \
     mkdir -p /etc/sudoers.d && \
-    echo "triage ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/triage && \
-    chmod 0440 /etc/sudoers.d/triage && \
+    echo "mean ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/mean && \
+    chmod 0440 /etc/sudoers.d/mean && \
     echo "set modeline" > /etc/vim/vimrc.local && \
     echo "export TERM=vt100\nexport LANG=C\nexport LC_ALL=C" > /etc/profile.d/dockenv.sh && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
@@ -57,9 +57,9 @@ RUN \
     /usr/bin/mongod --config /etc/mongod.conf --fork && \
     echo "export MONGOOSE_DISABLE_STABILITY_WARNING=1" >> ~/.bashrc && \
     export MONGOOSE_DISABLE_STABILITY_WARNING=1 && \
-    su - triage -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8\2/" package.json && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
-    perl -e 'local $/=undef; open(GR,"</home/triage/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/triage/appserver/Gruntfile.js"); print NG $F' && \
-    su - triage -c'cd appserver && grunt test' && \
+    su - mean -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8\2/" package.json && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
+    perl -e 'local $/=undef; open(GR,"</home/mean/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/mean/appserver/Gruntfile.js"); print NG $F' && \
+    su - mean -c'cd appserver && grunt test' && \
     killall mongod && sleep 10 && (killall -9 mongod 2>/dev/null || true) && sleep 5 && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
