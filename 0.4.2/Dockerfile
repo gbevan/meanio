@@ -49,6 +49,7 @@ RUN \
     npm install -g mocha && \
     npm install -g bower && \
     npm install -g mean-cli@0.9.21 && \
+    npm install -g forever && \
     npm cache clean && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
