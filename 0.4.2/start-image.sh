@@ -4,7 +4,7 @@ echo `date` "Starting SSHD"
 /usr/sbin/sshd -e
 
 echo `date` "Starting MongoDB"
-/usr/bin/mongod --config /etc/mongod.conf --fork
+/usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles --nojournal
 
 # Test for and execute a hook script (to be past by docker images layered
 # on top of this image.
