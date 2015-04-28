@@ -11,8 +11,8 @@ echo `date` "Starting MongoDB"
 if [ -x /start-image-hook.sh ]
 then
   echo `date` "Running start-image-hook"
-  /start-image-hook.sh
+  . /start-image-hook.sh
 fi
 
 echo `date` "Starting MEAN.IO Appserver"
-su - mean -c "cd appserver && grunt cssmin && grunt uglify && NODE_ENV=production forever -w server.js"
+su - mean -c "cd appserver && grunt cssmin && grunt uglify && NODE_ENV=production forever -w server.js ${HOOKARGS}"
