@@ -15,4 +15,4 @@ then
 fi
 
 echo `date` "Starting MEAN.IO Appserver"
-su - mean -c "cd appserver && NODE_ENV=production forever -w server.js"
+su - mean -c "cd appserver && grunt cssmin && grunt uglify && NODE_ENV=production forever -w server.js"
