@@ -22,9 +22,9 @@ RUN \
     sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config && \
     sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config && \
     useradd --create-home -s /bin/bash mean && \
-    mkdir -p /home/mean/.ssh && \
+    su - mean -c "mkdir -p .ssh; chmod 700 .ssh" && \
     echo -n 'mean:mean' | chpasswd && \
-    touch /home/mean/.hushlogin && \
+    su - mean -c "touch .hushlogin" && \
     mkdir -p /etc/sudoers.d && \
     echo "mean ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/mean && \
     chmod 0440 /etc/sudoers.d/mean && \
