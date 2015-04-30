@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-echo `date` "Starting SSHD"
-/usr/sbin/sshd -e
+#echo `date` "Starting SSHD"
+#/usr/sbin/sshd -e
 
 echo `date` "Running mongod repair"
 /usr/bin/mongod --repair --config /etc/mongod.conf
@@ -21,4 +21,4 @@ echo `date` "Preparing MEAN.IO Appserver"
 su - mean -c "cd appserver && grunt cssmin && grunt uglify"
 
 echo `date` "Starting MEAN.IO Appserver. NODEARGS:${NODEARGS} MEANARGS:${MEANARGS}"
-su - mean -c "cd appserver && eval " ${NODEENV}" && NODE_ENV=production forever -w -c 'node ${NODEARGS}' server.js ${MEANARGS}"
+su - mean -c "cd appserver && NODE_ENV=production forever -w -c 'node ${NODEARGS}' server.js ${MEANARGS}"
