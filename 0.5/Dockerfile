@@ -3,6 +3,7 @@
 #
 # Run:
 #
+# 2015-06-04 - 0.5(.22) is not ready for development against yet. Stick with 0.4.2 for now.
 
 FROM ubuntu:latest
 MAINTAINER Graham Bevan "graham.bevan@ntlworld.com"
@@ -30,25 +31,24 @@ RUN \
     chmod 0440 /etc/sudoers.d/mean && \
     echo "set modeline" > /etc/vim/vimrc.local && \
     echo "export TERM=vt100\nexport LANG=C\nexport LC_ALL=C" > /etc/profile.d/dockenv.sh && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Mongodb & mean-cli
 RUN \
-    echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
+    echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.0.list && \
     apt-get -yq update && \
     apt-get install -yqq mongodb-org && \
     curl -sL https://deb.nodesource.com/setup | sudo bash - && \
     apt-get -yq update && \
     apt-get install -yqq nodejs && \
     apt-get clean && \
-    npm install -g grunt-cli && \
     npm install -g gulp && \
     npm install -g karma-cli && \
     npm install -g mocha && \
     npm install -g bower && \
-    npm install -g mean-cli@0.9.21 && \
+    npm install -g mean-cli && \
     npm install -g forever && \
     npm cache clean && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -56,15 +56,13 @@ RUN \
 # App init
 RUN \
     /usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles && \
-    echo "export MONGOOSE_DISABLE_STABILITY_WARNING=1" >> ~/.bashrc && \
-    export MONGOOSE_DISABLE_STABILITY_WARNING=1 && \
-    su - mean -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8\2/" package.json && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
-    perl -e 'local $/=undef; open(GR,"</home/mean/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/mean/appserver/Gruntfile.js"); print NG $F' && \
-    su - mean -c'cd appserver && grunt test' && \
+    su - mean -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.5.0 appserver && cd appserver && npm install && npm update && bower --config.interactive=false install && bower --config.interactive=false update && npm cache clean; bower cache clean' && \
     (/usr/bin/mongod --shutdown --config /etc/mongod.conf &) && \
     sleep 5 && \
     (killall mongod 2>/dev/null || true) && sleep 10 && (killall -9 mongod 2>/dev/null || true) && sleep 5 && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+    #su - mean -c'cd appserver && grunt test' && \
 
 ADD start-image.sh /
 
