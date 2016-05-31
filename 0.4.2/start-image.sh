@@ -3,8 +3,8 @@
 #echo `date` "Starting SSHD"
 #/usr/sbin/sshd -e
 
-echo `date` "Running mongod repair"
-/usr/bin/mongod --repair --config /etc/mongod.conf
+#echo `date` "Running mongod repair"
+#/usr/bin/mongod --repair --config /etc/mongod.conf
 
 echo `date` "Starting MongoDB"
 /usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles
