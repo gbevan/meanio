@@ -11,6 +11,9 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LANG=C
 ENV LC_ALL=C
 
+ADD fix-bower.sh /home/mean
+ADD start-image.sh /
+
 # Dependencies
 RUN \
     apt-get -yq update && \
@@ -32,10 +35,6 @@ RUN \
     echo "export TERM=vt100\nexport LANG=C\nexport LC_ALL=C" > /etc/profile.d/dockenv.sh && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Mongodb & mean-cli
-RUN \
     echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list && \
     apt-get -yq update && \
     apt-get install -yqq mongodb-org && \
@@ -43,6 +42,7 @@ RUN \
     apt-get -yq update && \
     apt-get install -yqq nodejs && \
     apt-get clean && \
+    npm install -g node-gyp && \
     npm install -g grunt-cli && \
     npm install -g gulp && \
     npm install -g karma-cli && \
@@ -51,12 +51,6 @@ RUN \
     npm install -g mean-cli@0.9.21 && \
     npm install -g forever && \
     npm cache clean && \
-    rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-ADD fix-bower.sh /home/mean
-
-# App init
-RUN \
     /usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles && \
     echo "export MONGOOSE_DISABLE_STABILITY_WARNING=1" >> ~/.bashrc && \
     export MONGOOSE_DISABLE_STABILITY_WARNING=1 && \
@@ -68,9 +62,7 @@ RUN \
     (killall mongod 2>/dev/null || true) && sleep 10 && (killall -9 mongod 2>/dev/null || true) && sleep 5 && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD start-image.sh /
 
-#CMD ["/usr/sbin/sshd", "-D", "-e"]
 ENTRYPOINT ["/bin/bash", "/start-image.sh"]
 
 EXPOSE 3000
