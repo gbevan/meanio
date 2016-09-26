@@ -16,6 +16,8 @@ ADD start-image.sh /
 
 # Dependencies
 RUN \
+    apt-get -yq update && \
+    apt-get install -y software-properties-common && \
     apt-add-repository ppa:git-core/ppa -y && \
     apt-get -yq update && \
     apt-get dist-upgrade -yq && \
